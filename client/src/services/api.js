@@ -94,7 +94,7 @@ export const getGroupPosts = async (groupId) => {
 
 export const createPost = async (postData) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +146,7 @@ export const deletePost = async (postId) => {
 
 export const updatePost = async (postId, postData) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +175,7 @@ export const addComment = async (postId, text) => {
 
 export const updateComment = async (postId, commentId, commentData) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -196,7 +196,7 @@ export const updateComment = async (postId, commentId, commentData) => {
 
 export const deleteComment = async (postId, commentId) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const config = {
       headers: {
         "x-auth-token": token,

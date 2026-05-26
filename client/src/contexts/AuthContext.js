@@ -10,13 +10,14 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ✨ פונקציית עדכון הטוקן המשופרת - מעדכנת את Axios בזמן אמת!
   const setAuthToken = (token) => {
     if (token) {
       axios.defaults.headers.common["x-auth-token"] = token;
       sessionStorage.setItem("token", token);
     } else {
       delete axios.defaults.headers.common["x-auth-token"];
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
     }
   };
 
@@ -87,6 +88,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✨ פונקציית ה-Login המעודכנת - קוראת ל-setAuthToken ומחליפה זהות מיד!
   const login = async (email, password) => {
     try {
       setError(null);
@@ -95,6 +97,7 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
+      // מעדכן את הצינור של Axios עם הטוקן החדש של המשתמש שהתחבר כרגע
       setAuthToken(res.data.token);
 
       const userRes = await axios.get("http://localhost:5000/api/users/me");
