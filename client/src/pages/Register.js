@@ -11,7 +11,7 @@ const Register = () => {
   });
   const [formError, setFormError] = useState("");
 
-  const { isAuthenticated, register, error } = useContext(AuthContext);
+  const { isAuthenticated, register, error, clearErrors } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +35,8 @@ const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
+    if (clearErrors) clearErrors();
 
     if (!username || !email || !password) {
       setFormError("Please enter all fields");
@@ -47,9 +49,11 @@ const Register = () => {
     }
 
     const userData = { username, email, password };
+
     const success = await register(userData);
+
     if (success) {
-      navigate("/");
+      navigate("/login");
     }
   };
 

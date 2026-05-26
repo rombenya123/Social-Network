@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const setAuthToken = (token) => {
     if (token) {
       axios.defaults.headers.common["x-auth-token"] = token;
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
     } else {
       delete axios.defaults.headers.common["x-auth-token"];
       localStorage.removeItem("token");
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       if (token) {
         try {
@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }) => {
           setError("Invalid token");
         }
       }
-
       setLoading(false);
     };
 
@@ -64,28 +63,38 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const register = async (userData) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
     try {
-      const res = await axios.post("http://localhost:5000/api/users", userData);
+      setError(null);
+      const res = await axios.post("http://localhost:5000/api/users", userData, config);
+
       setAuthToken(res.data.token);
 
       const userRes = await axios.get("http://localhost:5000/api/users/me");
       setCurrentUser(userRes.data);
       setIsAuthenticated(true);
-      setError(null);
 
       return true;
     } catch (err) {
-      setError(err.response?.data?.msg || "Registration failed");
+      const errMsg = err.response?.data?.msg || "Registration failed";
+      setError(errMsg);
       return false;
     }
   };
 
   const login = async (email, password) => {
     try {
+      setError(null);
       const res = await axios.post("http://localhost:5000/api/users/login", {
         email,
         password,
       });
+
       setAuthToken(res.data.token);
 
       const userRes = await axios.get("http://localhost:5000/api/users/me");
@@ -95,7 +104,8 @@ export const AuthProvider = ({ children }) => {
 
       return true;
     } catch (err) {
-      setError(err.response?.data?.msg || "Login failed");
+      const errMsg = err.response?.data?.msg || "Login failed";
+      setError(errMsg);
       return false;
     }
   };
@@ -116,6 +126,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const clearErrors = () => {
+    setError(null);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -127,6 +141,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateProfilePicture,
+        clearErrors,
       }}
     >
       {children}
